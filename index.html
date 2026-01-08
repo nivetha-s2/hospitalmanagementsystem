@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare | Medical Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #0d62d9;
+            --primary-light: #e8f0fe;
+            --secondary: #5f6368;
+            --accent: #00bfa6;
+            --success: #00c853;
+            --error: #d32f2f;
+            --warning: #ff9800;
+            --light-bg: #f8f9fa;
+            --dark-bg: #0d1b2a;
+            --card-bg: #ffffff;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --text-light: #8a8d91;
+            --border: #dadce0;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --gradient-primary: linear-gradient(135deg, #1a73e8 0%, #0d62d9 100%);
+            --gradient-accent: linear-gradient(135deg, #00bfa6 0%, #00897b 100%);
+        }
+
+        [data-theme="dark"] {
+            --primary: #4285f4;
+            --primary-dark: #3367d6;
+            --primary-light: #202124;
+            --secondary: #9aa0a6;
+            --accent: #00e5c9;
+            --light-bg: #0d1b2a;
+            --dark-bg: #040d19;
+            --card-bg: #1e293b;
+            --text-primary: #e8eaed;
+            --text-secondary: #bdc1c6;
+            --text-light: #9aa0a6;
+            --border: #3c4043;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: var(--light-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Left Panel - Branding */
+        .brand-panel {
+            flex: 1;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.1"><path d="M500,100 Q650,150 800,100 T1100,150 L1100,0 L0,0 L0,150 Q150,100 300,150 T500,100" fill="white"/></svg>');
+            background-size: cover;
+        }
+
+        .brand-logo {
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-logo h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-logo .tagline {
+            font-size: 18px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .features {
+            max-width: 500px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .feature-text h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .feature-text p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Right Panel - Forms */
+        .form-panel {
+            flex: 1.2;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light-bg);
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .form-header {
+            margin-bottom: 32px;
+        }
+
+        .form-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        /* Tabs */
+        .form-tabs {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 6px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+        }
+
+        .form-tab {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .form-tab i {
+            font-size: 18px;
+        }
+
+        .form-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+        }
+
+        /* Role Selector */
+        .role-selector {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+        }
+
+        .role-selector h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .role-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .role-option {
+            padding: 18px;
+            border: 2px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .role-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .role-option.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .role-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .role-option.active .role-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .role-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .role-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Forms */
+        .form-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        label i {
+            color: var(--text-secondary);
+            margin-right: 6px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 115, 232, 0.3);
+        }
+
+        /* Success Card */
+        .success-card {
+            background: linear-gradient(135deg, rgba(0, 200, 83, 0.1) 0%, rgba(0, 200, 83, 0.05) 100%);
+            border: 2px solid #00c853;
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 24px;
+            display: none;
+        }
+
+        .success-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            background: #00c853;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+        }
+
+        .success-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #00c853;
+        }
+
+        .success-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .id-container {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        [data-theme="dark"] .id-container {
+            background: var(--card-bg);
+            border-color: var(--border);
+        }
+
+        .id-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .id-value {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1px;
+            padding: 12px;
+            background: rgba(26, 115, 232, 0.05);
+            border-radius: 8px;
+            word-break: break-all;
+        }
+
+        .copy-section {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .copy-btn {
+            flex: 1;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .copy-btn.copied {
+            background: #00c853;
+        }
+
+        .close-btn {
+            padding: 14px 24px;
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            border-color: var(--text-secondary);
+        }
+
+        /* Messages */
+        .alert {
+            padding: 16px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14.5px;
+            display: none;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background: rgba(0, 200, 83, 0.1);
+            border-color: #00c853;
+            color: #00c853;
+        }
+
+        .alert-error {
+            background: rgba(211, 47, 47, 0.1);
+            border-color: #d32f2f;
+            color: #d32f2f;
+        }
+
+        /* Footer */
+        .form-footer {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .brand-panel {
+                padding: 40px 20px;
+            }
+            
+            .form-panel {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .role-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .success-card {
+                padding: 24px;
+            }
+            
+            .id-value {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 24px;
+            }
+            
+            .theme-toggle {
+                top: 20px;
+                right: 20px;
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .brand-logo h1 {
+                font-size: 32px;
+            }
+            
+            .form-header h2 {
+                font-size: 24px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease;
+        }
+
+        .slide-in {
+            animation: slideIn 0.4s ease;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Panel: Branding & Features -->
+        <div class="brand-panel">
+            <div class="brand-logo">
+                <h1>MediCare</h1>
+                <div class="tagline">Advanced Healthcare Management Platform</div>
+            </div>
+            
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Secure & Encrypted</h3>
+                        <p>Your medical data is protected with enterprise-grade security</p>
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Instant Access</h3>
+                        <p>Access your medical records anytime, anywhere</p>
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Seamless Collaboration</h3>
+                        <p>Doctors and hospitals work together for your care</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Forms -->
+        <div class="form-panel">
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+                <span>Dark Mode</span>
+            </button>
+            
+            <div class="form-wrapper">
+                <div class="form-header">
+                    <h2>Welcome to MediCare</h2>
+                    <p>Sign in to your account or create a new one</p>
+                </div>
+                
+                <!-- Tabs -->
+                <div class="form-tabs">
+                    <button class="form-tab active" onclick="switchTab('login')">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Sign In</span>
+                    </button>
+                    <button class="form-tab" onclick="switchTab('register')">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Register</span>
+                    </button>
+                </div>
+
+                <!-- Login Section -->
+                <div id="loginSection">
+                    <div class="role-selector">
+                        <h3><i class="fas fa-user-tag"></i> Select Account Type</h3>
+                        <div class="role-options">
+                            <div class="role-option active" onclick="switchRole('patient', 'login')">
+                                <div class="role-icon">
+                                    <i class="fas fa-user-injured"></i>
+                                </div>
+                                <div class="role-name">Patient</div>
+                                <div class="role-desc">Access medical records</div>
+                            </div>
+                            <div class="role-option" onclick="switchRole('hospital', 'login')">
+                                <div class="role-icon">
+                                    <i class="fas fa-hospital"></i>
+                                </div>
+                                <div class="role-name">Hospital</div>
+                                <div class="role-desc">Manage patient care</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-container">
+                        <!-- Patient Login Form -->
+                        <form id="patientLoginForm" onsubmit="handlePatientLogin(event)">
+                            <div class="form-group">
+                                <label><i class="fas fa-user"></i> Full Name</label>
+                                <div class="input-group">
+                                    <i class="fas fa-user input-icon"></i>
+                                    <input type="text" id="loginPatientName" required placeholder="Enter your full name">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-envelope"></i> Email Address</label>
+                                <div class="input-group">
+                                    <i class="fas fa-envelope input-icon"></i>
+                                    <input type="email" id="loginPatientEmail" required placeholder="Enter your email">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-id-card"></i> Patient ID</label>
+                                <div class="input-group">
+                                    <i class="fas fa-id-card input-icon"></i>
+                                    <input type="text" id="loginPatientId" placeholder="PAT-XXXXXXXXXX" required>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn" id="patientLoginBtn">
+                                <span>Sign In as Patient</span>
+                            </button>
+                        </form>
+
+                        <!-- Hospital Login Form -->
+                        <form id="hospitalLoginForm" class="hidden" onsubmit="handleHospitalLogin(event)">
+                            <div class="form-group">
+                                <label><i class="fas fa-hospital"></i> Hospital Name</label>
+                                <div class="input-group">
+                                    <i class="fas fa-hospital input-icon"></i>
+                                    <input type="text" id="loginHospitalName" required placeholder="Enter hospital name">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-envelope"></i> Email Address</label>
+                                <div class="input-group">
+                                    <i class="fas fa-envelope input-icon"></i>
+                                    <input type="email" id="loginHospitalEmail" required placeholder="Enter hospital email">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-id-card"></i> Hospital ID</label>
+                                <div class="input-group">
+                                    <i class="fas fa-id-card input-icon"></i>
+                                    <input type="text" id="loginHospitalId" placeholder="HOSP-XXXXXXXXXX" required>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn" id="hospitalLoginBtn">
+                                <span>Sign In as Hospital</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Register Section -->
+                <div id="registerSection" class="hidden">
+                    <div class="role-selector">
+                        <h3><i class="fas fa-user-plus"></i> Create Account Type</h3>
+                        <div class="role-options">
+                            <div class="role-option active" onclick="switchRole('patient', 'register')">
+                                <div class="role-icon">
+                                    <i class="fas fa-user-injured"></i>
+                                </div>
+                                <div class="role-name">Patient</div>
+                                <div class="role-desc">Create patient account</div>
+                            </div>
+                            <div class="role-option" onclick="switchRole('hospital', 'register')">
+                                <div class="role-icon">
+                                    <i class="fas fa-hospital"></i>
+                                </div>
+                                <div class="role-name">Hospital</div>
+                                <div class="role-desc">Register hospital</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-container">
+                        <!-- Patient Registration Form -->
+                        <form id="patientRegisterForm" onsubmit="handlePatientRegister(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label><i class="fas fa-user"></i> Full Name</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-user input-icon"></i>
+                                        <input type="text" id="regPatientName" required placeholder="John Doe">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-envelope input-icon"></i>
+                                        <input type="email" id="regPatientEmail" required placeholder="john@example.com">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label><i class="fas fa-lock"></i> Password</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-lock input-icon"></i>
+                                        <input type="password" id="regPatientPassword" required placeholder="Minimum 8 characters" minlength="6">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label><i class="fas fa-calendar"></i> Date of Birth</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-calendar input-icon"></i>
+                                        <input type="date" id="regPatientDOB" required max="2010-01-01">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label><i class="fas fa-tint"></i> Blood Group</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-tint input-icon"></i>
+                                        <select id="regPatientBlood" required>
+                                            <option value="">Select Blood Group</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label><i class="fas fa-phone"></i> Emergency Contact</label>
+                                    <div class="input-group">
+                                        <i class="fas fa-phone input-icon"></i>
+                                        <input type="tel" id="regPatientContact" placeholder="10-digit number" required pattern="[0-9]{10}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-map-marker-alt"></i> Address</label>
+                                <div class="input-group">
+                                    <i class="fas fa-map-marker-alt input-icon"></i>
+                                    <input type="text" id="regPatientAddress" required placeholder="123 Main Street, City">
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn" id="patientRegBtn">
+                                <span>Create Patient Account</span>
+                            </button>
+                        </form>
+
+                        <!-- Hospital Registration Form -->
+                        <form id="hospitalRegisterForm" class="hidden" onsubmit="handleHospitalRegister(event)">
+                            <div class="form-group">
+                                <label><i class="fas fa-hospital"></i> Hospital Name</label>
+                                <div class="input-group">
+                                    <i class="fas fa-hospital input-icon"></i>
+                                    <input type="text" id="regHospitalName" required placeholder="City General Hospital">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-envelope"></i> Email Address</label>
+                                <div class="input-group">
+                                    <i class="fas fa-envelope input-icon"></i>
+                                    <input type="email" id="regHospitalEmail" required placeholder="hospital@example.com">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-lock"></i> Password</label>
+                                <div class="input-group">
+                                    <i class="fas fa-lock input-icon"></i>
+                                    <input type="password" id="regHospitalPassword" required placeholder="Minimum 8 characters" minlength="6">
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="submit-btn" id="hospitalRegBtn">
+                                <span>Register Hospital Account</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Success Card -->
+                <div class="success-card fade-in" id="successCard">
+                    <div class="success-header">
+                        <div class="success-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div>
+                            <div class="success-title">Registration Successful</div>
+                            <div class="success-subtitle">Your account has been created successfully</div>
+                        </div>
+                    </div>
+                    
+                    <div class="id-container">
+                        <div class="id-label">Your Unique ID</div>
+                        <div class="id-value" id="generatedId">Loading...</div>
+                        <p style="margin-top: 12px; font-size: 14px; color: var(--text-secondary);">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Please save this ID for future logins. You cannot recover it if lost.
+                        </p>
+                    </div>
+                    
+                    <div class="copy-section">
+                        <button class="copy-btn" id="copyIdBtn" onclick="copyToClipboard()">
+                            <i class="fas fa-copy"></i>
+                            <span>Copy ID</span>
+                        </button>
+                        <button class="close-btn" onclick="closeSuccessCard()">
+                            Close
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Alert Messages -->
+                <div class="alert" id="alertBox"></div>
+
+                <!-- Footer -->
+                <div class="form-footer">
+                    <p>By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+                    <p style="margin-top: 8px;">&copy; 2024 MediCare Healthcare Systems. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://hospital2-4.onrender.com/api';
+        let currentRole = 'patient';
+        let currentFormType = 'login';
+
+        // Theme Management
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const icon = document.querySelector('.theme-toggle i');
+            const text = document.querySelector('.theme-toggle span');
+            icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            text.textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            // Set theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const icon = document.querySelector('.theme-toggle i');
+            const text = document.querySelector('.theme-toggle span');
+            icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            text.textContent = savedTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+            
+            // Set max date for DOB (must be at least 14 years old)
+            const today = new Date();
+            const maxDate = new Date(today.getFullYear() - 14, today.getMonth(), today.getDate());
+            document.getElementById('regPatientDOB').max = maxDate.toISOString().split('T')[0];
+        });
+
+        // Tab Switching
+        function switchTab(tab) {
+            // Update tabs
+            document.querySelectorAll('.form-tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update sections
+            if (tab === 'login') {
+                document.getElementById('loginSection').classList.remove('hidden');
+                document.getElementById('registerSection').classList.add('hidden');
+                currentFormType = 'login';
+            } else {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('registerSection').classList.remove('hidden');
+                currentFormType = 'register';
+            }
+            
+            // Reset forms
+            hideAlert();
+            document.getElementById('successCard').style.display = 'none';
+            
+            // Ensure correct role form is shown
+            showRoleForm(currentRole);
+        }
+
+        // Role Switching
+        function switchRole(role, formType) {
+            currentRole = role;
+            
+            // Update role options
+            document.querySelectorAll('.role-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.target.closest('.role-option').classList.add('active');
+            
+            // Show appropriate form
+            showRoleForm(role);
+            
+            hideAlert();
+        }
+
+        function showRoleForm(role) {
+            if (currentFormType === 'login') {
+                document.getElementById('patientLoginForm').classList.toggle('hidden', role !== 'patient');
+                document.getElementById('hospitalLoginForm').classList.toggle('hidden', role !== 'hospital');
+            } else {
+                document.getElementById('patientRegisterForm').classList.toggle('hidden', role !== 'patient');
+                document.getElementById('hospitalRegisterForm').classList.toggle('hidden', role !== 'hospital');
+            }
+        }
+
+        // Alert Management
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
+        function hideAlert() {
+            document.getElementById('alertBox').style.display = 'none';
+        }
+
+        // Button Loading State
+        function setButtonLoading(buttonId, isLoading) {
+            const btn = document.getElementById(buttonId);
+            if (isLoading) {
+                btn.disabled = true;
+                btn.innerHTML = `<div class="loading"></div> Processing...`;
+            } else {
+                btn.disabled = false;
+                const btnText = {
+                    'patientLoginBtn': 'Sign In as Patient',
+                    'hospitalLoginBtn': 'Sign In as Hospital',
+                    'patientRegBtn': 'Create Patient Account',
+                    'hospitalRegBtn': 'Register Hospital Account'
+                };
+                btn.innerHTML = `<span>${btnText[buttonId]}</span>`;
+            }
+        }
+
+        // Registration Functions
+        async function handlePatientRegister(e) {
+            e.preventDefault();
+            setButtonLoading('patientRegBtn', true);
+
+            const data = {
+                name: document.getElementById('regPatientName').value.trim(),
+                email: document.getElementById('regPatientEmail').value.trim(),
+                password: document.getElementById('regPatientPassword').value,
+                dateOfBirth: document.getElementById('regPatientDOB').value,
+                bloodGroup: document.getElementById('regPatientBlood').value,
+                emergencyContact: document.getElementById('regPatientContact').value.trim(),
+                address: document.getElementById('regPatientAddress').value.trim()
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/register/patient`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('generatedId').textContent = result.userId;
+                    document.getElementById('successCard').style.display = 'block';
+                    e.target.reset();
+                    showAlert('Registration completed successfully!', 'success');
+                    
+                    // Scroll to success card
+                    document.getElementById('successCard').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                } else {
+                    showAlert(result.message || 'Registration failed. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Connection error. Please check your network and try again.', 'error');
+            } finally {
+                setButtonLoading('patientRegBtn', false);
+            }
+        }
+
+        async function handleHospitalRegister(e) {
+            e.preventDefault();
+            setButtonLoading('hospitalRegBtn', true);
+
+            const data = {
+                hospitalName: document.getElementById('regHospitalName').value.trim(),
+                email: document.getElementById('regHospitalEmail').value.trim(),
+                password: document.getElementById('regHospitalPassword').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/register/hospital`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('generatedId').textContent = result.hospitalId;
+                    document.getElementById('successCard').style.display = 'block';
+                    e.target.reset();
+                    showAlert('Hospital registration completed successfully!', 'success');
+                    
+                    // Scroll to success card
+                    document.getElementById('successCard').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                } else {
+                    showAlert(result.message || 'Registration failed. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Connection error. Please check your network and try again.', 'error');
+            } finally {
+                setButtonLoading('hospitalRegBtn', false);
+            }
+        }
+
+        // Login Functions
+        async function handlePatientLogin(e) {
+            e.preventDefault();
+            setButtonLoading('patientLoginBtn', true);
+
+            const data = {
+                name: document.getElementById('loginPatientName').value.trim(),
+                email: document.getElementById('loginPatientEmail').value.trim(),
+                userId: document.getElementById('loginPatientId').value.trim()
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/login/patient`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    localStorage.setItem('token', result.token);
+                    localStorage.setItem('userRole', 'patient');
+                    localStorage.setItem('userData', JSON.stringify(result.user));
+                    showAlert('Login successful! Redirecting to dashboard...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'patient-dashboard.html';
+                    }, 1500);
+                } else {
+                    showAlert(result.message || 'Invalid credentials. Please try again.', 'error');
+                    setButtonLoading('patientLoginBtn', false);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Connection error. Please check your network and try again.', 'error');
+                setButtonLoading('patientLoginBtn', false);
+            }
+        }
+
+        async function handleHospitalLogin(e) {
+            e.preventDefault();
+            setButtonLoading('hospitalLoginBtn', true);
+
+            const data = {
+                hospitalName: document.getElementById('loginHospitalName').value.trim(),
+                email: document.getElementById('loginHospitalEmail').value.trim(),
+                hospitalId: document.getElementById('loginHospitalId').value.trim()
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/login/hospital`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    localStorage.setItem('token', result.token);
+                    localStorage.setItem('userRole', 'hospital');
+                    localStorage.setItem('hospitalData', JSON.stringify(result.hospital));
+                    showAlert('Login successful! Redirecting to dashboard...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'hospital-dashboard.html';
+                    }, 1500);
+                } else {
+                    showAlert(result.message || 'Invalid credentials. Please try again.', 'error');
+                    setButtonLoading('hospitalLoginBtn', false);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Connection error. Please check your network and try again.', 'error');
+                setButtonLoading('hospitalLoginBtn', false);
+            }
+        }
+
+        // Success Card Functions
+        function copyToClipboard() {
+            const idText = document.getElementById('generatedId').textContent;
+            const copyBtn = document.getElementById('copyIdBtn');
+            
+            navigator.clipboard.writeText(idText).then(() => {
+                copyBtn.classList.add('copied');
+                copyBtn.innerHTML = `<i class="fas fa-check"></i><span>Copied!</span>`;
+                
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.innerHTML = `<i class="fas fa-copy"></i><span>Copy ID</span>`;
+                }, 2000);
+            });
+        }
+
+        function closeSuccessCard() {
+            document.getElementById('successCard').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
