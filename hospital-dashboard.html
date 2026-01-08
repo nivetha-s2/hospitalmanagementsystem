@@ -1,0 +1,2297 @@
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Dashboard - MediCare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #0ea5e9;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --input-bg: #ffffff;
+            --input-border: #e2e8f0;
+            --sidebar-bg: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            --sidebar-hover: rgba(255, 255, 255, 0.1);
+            --sidebar-text: #e2e8f0;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-sidebar: 4px 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f1f5f9;
+            --text-light: #94a3b8;
+            --input-bg: #334155;
+            --input-border: #475569;
+            --sidebar-bg: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+            --sidebar-hover: rgba(255, 255, 255, 0.15);
+            --sidebar-text: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+            --shadow-sidebar: 4px 0 20px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.3s ease;
+        }
+
+        /* Mobile Toggle Button */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+        }
+
+        .mobile-toggle:hover {
+            background: var(--primary-dark);
+        }
+
+        /* SIDEBAR - Improved Design */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1000;
+            box-shadow: var(--shadow-sidebar);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 28px 24px;
+            background: rgba(37, 99, 235, 0.15);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            color: white;
+            font-size: 22px;
+            margin-bottom: 6px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-header i {
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .sidebar-nav {
+            padding: 32px 0;
+            flex: 1;
+        }
+
+        .nav-section {
+            margin-bottom: 32px;
+        }
+
+        .nav-section-title {
+            padding: 8px 24px;
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+
+        .nav-item {
+            padding: 15px 24px;
+            color: var(--sidebar-text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            font-size: 15px;
+            font-weight: 500;
+            margin: 4px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: rgba(37, 99, 235, 0.1);
+            transition: width 0.3s ease;
+        }
+
+        .nav-item:hover::before {
+            width: 100%;
+        }
+
+        .nav-item:hover {
+            color: white;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(37, 99, 235, 0.15) 0%, rgba(37, 99, 235, 0.05) 100%);
+            color: white;
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-item.active::before {
+            display: none;
+        }
+
+        .nav-item i {
+            width: 24px;
+            text-align: center;
+            font-size: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-footer button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-footer button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-footer button:hover::before {
+            left: 100%;
+        }
+
+        .theme-toggle-sidebar {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .theme-toggle-sidebar:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .logout-sidebar {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        .logout-sidebar:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        /* MAIN CONTENT - Improved Design */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 32px;
+            width: calc(100% - 280px);
+            transition: margin-left 0.3s ease, padding 0.3s ease;
+        }
+
+        .top-bar {
+            background: var(--card-bg);
+            padding: 24px 32px;
+            border-radius: var(--border-radius);
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--input-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .top-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+
+        .page-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-title-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .alert-btn {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alert-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .alert-btn:hover::before {
+            left: 100%;
+        }
+
+        .alert-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.35);
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* CARDS - Improved Design */
+        .card {
+            background: var(--card-bg);
+            padding: 36px;
+            border-radius: var(--border-radius);
+            margin-bottom: 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--input-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--primary-light));
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .card h3 {
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .card h3 i {
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-subtitle {
+            color: var(--text-light);
+            font-size: 15px;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        /* SEARCH BAR - Improved Design */
+        .search-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            max-width: 800px;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            padding: 16px 24px 16px 52px;
+            font-size: 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 18px;
+            z-index: 2;
+        }
+
+        /* FORM ELEMENTS - Improved Design */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label i {
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .form-group label .required {
+            color: var(--danger);
+        }
+
+        input, select, textarea {
+            background: var(--input-bg);
+            color: var(--text);
+            border: 2px solid var(--input-border);
+            padding: 16px 20px;
+            border-radius: 10px;
+            width: 100%;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        /* BUTTONS - Improved Design */
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.35);
+        }
+
+        .btn-small {
+            padding: 12px 20px;
+            font-size: 14px;
+        }
+
+        /* ALERTS & MESSAGES - Improved Design */
+        .alert-message {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+            padding: 20px 28px;
+            border-radius: 12px;
+            margin-bottom: 28px;
+            display: none;
+            font-weight: 600;
+            align-items: center;
+            gap: 14px;
+            border-left: 6px solid var(--success);
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .alert-message i {
+            font-size: 22px;
+        }
+
+        [data-theme="dark"] .alert-message {
+            background: linear-gradient(135deg, #064e3b, #065f46);
+            color: #d1fae5;
+        }
+
+        /* PATIENT RESULTS & ALERTS - Improved Design */
+        .patient-result, .alert-item {
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border: 1px solid var(--input-border);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .patient-result::before, .alert-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--primary-light));
+        }
+
+        .patient-result:hover, .alert-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .patient-result h4 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            font-size: 15px;
+            color: var(--text-light);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .info-item i {
+            color: var(--primary);
+            font-size: 16px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .info-item strong {
+            color: var(--text);
+            font-weight: 600;
+            margin-right: 6px;
+        }
+
+        /* BLOOD BANK - IMPROVED DESIGN */
+        .blood-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 28px;
+            margin-top: 20px;
+        }
+
+        .blood-card {
+            background: var(--card-bg);
+            padding: 32px 28px;
+            border-radius: 16px;
+            text-align: center;
+            border: 2px solid var(--input-border);
+            transition: all 0.4s ease;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .blood-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .blood-card.critical {
+            border-color: var(--danger);
+            background: linear-gradient(135deg, rgba(254, 226, 226, 0.8), rgba(254, 202, 202, 0.6));
+            animation: pulse 2s infinite;
+        }
+
+        [data-theme="dark"] .blood-card.critical {
+            background: linear-gradient(135deg, rgba(69, 10, 10, 0.8), rgba(127, 29, 29, 0.6));
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: translateY(0) scale(1); 
+                box-shadow: var(--shadow); 
+                border-color: var(--danger);
+            }
+            50% { 
+                transform: translateY(-4px) scale(1.02); 
+                box-shadow: 0 15px 30px rgba(239, 68, 68, 0.3);
+                border-color: #fca5a5;
+            }
+        }
+
+        .blood-header {
+            margin-bottom: 24px;
+        }
+
+        .blood-type {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .blood-units {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .blood-units .unit-label {
+            font-size: 16px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .blood-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+
+        .blood-status.available {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .blood-status.critical {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .blood-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: auto;
+        }
+
+        .blood-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .blood-control-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .blood-input-group {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .blood-input {
+            flex: 1;
+            padding: 14px 16px;
+            text-align: center;
+            font-weight: 600;
+            border-radius: 10px;
+            font-size: 16px;
+            border: 2px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .blood-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            outline: none;
+        }
+
+        .blood-btn {
+            min-width: 50px;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .blood-btn.add {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .blood-btn.add:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .blood-btn.remove {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        .blood-btn.remove:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .blood-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--input-border);
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* MODAL - Improved Design */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 48px;
+            border-radius: 24px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--input-border);
+            animation: modalSlideIn 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-40px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--danger), #dc2626);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .modal-header h3 {
+            color: var(--danger);
+            font-size: 26px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .close-modal {
+            background: var(--bg);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            color: var(--text);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            background: var(--input-border);
+            transform: rotate(90deg);
+        }
+
+        /* BADGES - Improved Design */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 2px solid transparent;
+        }
+
+        .badge i {
+            font-size: 12px;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #f59e0b;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-color: #0ea5e9;
+        }
+
+        /* EMPTY STATE - Improved Design */
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 72px;
+            margin-bottom: 24px;
+            opacity: 0.2;
+            color: var(--primary);
+        }
+
+        .empty-state h4 {
+            font-size: 22px;
+            margin-bottom: 16px;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1200px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 260px;
+            }
+            .main-content {
+                margin-left: 260px;
+                width: calc(100% - 260px);
+                padding: 28px;
+            }
+            
+            .blood-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .blood-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: 300px;
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+                box-shadow: 8px 0 30px rgba(0, 0, 0, 0.4);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 90px 20px 20px;
+            }
+            
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 24px;
+                padding: 24px;
+            }
+            
+            .alert-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .blood-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .card {
+                padding: 28px;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                margin-bottom: 24px;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .modal-content {
+                padding: 32px 24px;
+            }
+            
+            .blood-controls {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .blood-input-group {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn {
+                padding: 14px 24px;
+                font-size: 15px;
+            }
+            
+            .card {
+                padding: 24px;
+            }
+            
+            .sidebar {
+                width: 280px;
+            }
+            
+            .blood-type {
+                font-size: 36px;
+            }
+            
+            .blood-units {
+                font-size: 32px;
+            }
+            
+            .blood-control-group {
+                width: 100%;
+            }
+        }
+
+        /* UTILITY CLASSES */
+        .d-flex {
+            display: flex;
+        }
+        
+        .align-center {
+            align-items: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .flex-column {
+            flex-direction: column;
+        }
+        
+        .gap-2 {
+            gap: 8px;
+        }
+        
+        .gap-3 {
+            gap: 12px;
+        }
+        
+        .gap-4 {
+            gap: 16px;
+        }
+        
+        .gap-5 {
+            gap: 20px;
+        }
+        
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+        
+        .mb-3 {
+            margin-bottom: 12px;
+        }
+        
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+        
+        .mb-5 {
+            margin-bottom: 20px;
+        }
+        
+        .mb-6 {
+            margin-bottom: 24px;
+        }
+        
+        .mt-2 {
+            margin-top: 8px;
+        }
+        
+        .mt-3 {
+            margin-top: 12px;
+        }
+        
+        .mt-4 {
+            margin-top: 16px;
+        }
+        
+        .mt-5 {
+            margin-top: 20px;
+        }
+        
+        .mt-6 {
+            margin-top: 24px;
+        }
+        
+        .w-100 {
+            width: 100%;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(37, 99, 235, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-hospital-alt"></i> <span id="hospitalNameSidebar">MediCare</span></h2>
+            <p>Medical Management System</p>
+        </div>
+        
+        <div class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Medical Records</div>
+                <div class="nav-item active" onclick="navigate('patients')">
+                    <i class="fas fa-users-medical"></i>
+                    <span>Patient Records</span>
+                </div>
+                <div class="nav-item" onclick="navigate('register')">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Register Patient</span>
+                </div>
+                <div class="nav-item" onclick="navigate('addVisit')">
+                    <i class="fas fa-file-medical-alt"></i>
+                    <span>Add Visit Record</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Inventory Management</div>
+                <div class="nav-item" onclick="navigate('blood')">
+                    <i class="fas fa-tint"></i>
+                    <span>Blood Bank</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Alert System</div>
+                <div class="nav-item" onclick="navigate('critical')">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Critical Alerts</span>
+                </div>
+                <div class="nav-item" onclick="navigate('emergency')">
+                    <i class="fas fa-bell"></i>
+                    <span>Emergency Alerts</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="theme-toggle-sidebar" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+                <span>Dark Mode</span>
+            </button>
+            <button class="logout-sidebar" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title-wrapper">
+                <div class="page-title-icon">
+                    <i class="fas fa-users-medical"></i>
+                </div>
+                <div>
+                    <h1 class="page-title" id="pageTitle">Patient Records</h1>
+                    <div class="page-subtitle" id="pageSubtitle">Manage and search patient medical records</div>
+                </div>
+            </div>
+            <button class="alert-btn" onclick="showEmergencyModal()">
+                <i class="fas fa-bell"></i>
+                <span>Send Emergency Alert</span>
+            </button>
+        </div>
+
+        <!-- PATIENTS SECTION -->
+        <div id="patientsSection" class="section active">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-search"></i> Search Patient Records</h3>
+                </div>
+                <p class="card-subtitle">Search for patient records using Patient ID, name, or contact information</p>
+                
+                <div class="search-bar">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="patientSearchId" class="search-input" placeholder="Enter Patient ID (e.g., PAT-XXXXX)">
+                    </div>
+                    <button class="btn" onclick="searchPatient()">
+                        <i class="fas fa-search"></i>
+                        <span>Search Patient</span>
+                    </button>
+                </div>
+                <div id="patientResults"></div>
+            </div>
+        </div>
+
+        <!-- REGISTER PATIENT SECTION -->
+        <div id="registerSection" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-user-plus"></i> Register New Patient</h3>
+                </div>
+                
+                <div class="alert-message" id="regSuccess">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Patient registered successfully!</span>
+                </div>
+                
+                <form id="registerPatientForm" onsubmit="handleRegisterPatient(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Full Name <span class="required">*</span></label>
+                            <input type="text" id="regName" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> Email <span class="required">*</span></label>
+                            <input type="email" id="regEmail" required placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-alt"></i> Date of Birth <span class="required">*</span></label>
+                            <input type="date" id="regDOB" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-tint"></i> Blood Group <span class="required">*</span></label>
+                            <select id="regBlood" required>
+                                <option value="">Select Blood Group</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Emergency Contact <span class="required">*</span></label>
+                            <input type="tel" id="regContact" required pattern="[0-9]{10}" placeholder="10-digit number">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marker-alt"></i> Address <span class="required">*</span></label>
+                            <input type="text" id="regAddress" required placeholder="123 Main Street, City">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn w-100">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Register New Patient</span>
+                    </button>
+                </form>
+                
+                <div id="generatedPatientId" style="display:none; margin-top: 32px; padding: 28px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 16px; border-left: 6px solid var(--warning);">
+                    <div class="d-flex align-center gap-4 mb-4">
+                        <i class="fas fa-id-card" style="color: #92400e; font-size: 24px;"></i>
+                        <strong style="color: #92400e; font-size: 18px;">Generated Patient ID:</strong>
+                    </div>
+                    <div class="d-flex align-center justify-between mb-4">
+                        <span id="newPatientId" style="font-size: 28px; color: var(--primary); font-weight: 700; letter-spacing: 1px;"></span>
+                        <button class="btn-small btn-success" onclick="copyPatientId()">
+                            <i class="fas fa-copy"></i>
+                            <span>Copy ID</span>
+                        </button>
+                    </div>
+                    <div style="padding: 16px; background: rgba(255, 255, 255, 0.5); border-radius: 12px;">
+                        <p style="font-size: 15px; color: #92400e; margin: 0; line-height: 1.6;">
+                            <i class="fas fa-info-circle"></i> Patient can login using this ID, name, and email. Default password: <strong>temp123</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADD VISIT SECTION -->
+        <div id="addVisitSection" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-file-medical-alt"></i> Add Hospital Visit Record</h3>
+                </div>
+                
+                <div class="alert-message" id="visitSuccess">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Visit record added successfully!</span>
+                </div>
+                
+                <form id="addVisitForm" onsubmit="handleAddVisit(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-id-card"></i> Patient ID <span class="required">*</span></label>
+                            <input type="text" id="visitPatientId" required placeholder="PAT-XXXXX">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user-md"></i> Doctor Name <span class="required">*</span></label>
+                            <input type="text" id="visitDoctor" required placeholder="Dr. Smith">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-stethoscope"></i> Diagnosis <span class="required">*</span></label>
+                            <input type="text" id="visitDiagnosis" required placeholder="e.g., Viral Fever">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-prescription-bottle-alt"></i> Prescription <span class="required">*</span></label>
+                            <input type="text" id="visitPrescription" required placeholder="e.g., Paracetamol 500mg">
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-flask"></i> Lab Results</label>
+                            <textarea id="visitLab" placeholder="Enter lab test results (optional)"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-notes-medical"></i> Additional Notes</label>
+                            <textarea id="visitNotes" placeholder="Any additional notes (optional)"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn w-100">
+                        <i class="fas fa-save"></i>
+                        <span>Save Visit Record</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- BLOOD BANK SECTION -->
+        <div id="bloodSection" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-tint"></i> Blood Bank Management</h3>
+                </div>
+                <p class="card-subtitle">Manage blood inventory. Critical alerts are automatically sent when units fall below 10.</p>
+                <div class="blood-grid" id="bloodGrid">
+                    <div class="empty-state">
+                        <i class="fas fa-tint"></i>
+                        <h4>Loading Blood Bank Data</h4>
+                        <p>Please wait while we load the blood inventory...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CRITICAL ALERTS SECTION -->
+        <div id="criticalSection" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Critical Stock Alerts</h3>
+                </div>
+                <p class="card-subtitle">Hospitals with critically low blood stock (< 10 units)</p>
+                <div id="criticalAlerts">
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>No Critical Alerts</h4>
+                        <p>All blood stocks are currently at safe levels.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EMERGENCY ALERTS SECTION -->
+        <div id="emergencySection" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-bell"></i> Global Emergency Alerts</h3>
+                </div>
+                <p class="card-subtitle">Emergency alerts from all hospitals in the network</p>
+                <div id="emergencyAlerts">
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <h4>No Emergency Alerts</h4>
+                        <p>There are currently no active emergency alerts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EMERGENCY MODAL -->
+    <div id="emergencyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-bell"></i> Send Emergency Alert</h3>
+                <button class="close-modal" onclick="closeEmergencyModal()">×</button>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-exclamation-circle"></i> Emergency Message <span class="required">*</span></label>
+                <textarea id="emergencyMessage" rows="5" placeholder="Describe the emergency situation..."></textarea>
+            </div>
+            <div class="d-flex gap-3">
+                <button class="btn btn-danger w-100" onclick="sendEmergencyAlert()">
+                    <i class="fas fa-broadcast-tower"></i>
+                    <span>Broadcast Alert</span>
+                </button>
+                <button class="btn w-100" onclick="closeEmergencyModal()" style="background: var(--secondary);">
+                    <i class="fas fa-times"></i>
+                    <span>Cancel</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+    <script>
+        const API_URL = 'https://hospital2-4.onrender.com/api';
+        const socket = io('https://hospital2-4.onrender.com');
+        let hospitalData = null;
+
+        // Theme Management
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            updateThemeButton(newTheme);
+        }
+
+        function updateThemeButton(theme) {
+            const themeToggle = document.querySelector('.theme-toggle-sidebar');
+            const icon = themeToggle.querySelector('i');
+            const text = themeToggle.querySelector('span');
+            
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun';
+                text.textContent = 'Light Mode';
+            } else {
+                icon.className = 'fas fa-moon';
+                text.textContent = 'Dark Mode';
+            }
+        }
+
+        // Sidebar Management
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        // Initialize Theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeButton(savedTheme);
+
+        // Navigation
+        function navigate(section) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+            
+            const pageData = {
+                patients: {
+                    title: 'Patient Records',
+                    subtitle: 'Manage and search patient medical records',
+                    icon: 'fas fa-users-medical'
+                },
+                register: {
+                    title: 'Register New Patient',
+                    subtitle: 'Add new patients to the hospital system',
+                    icon: 'fas fa-user-plus'
+                },
+                addVisit: {
+                    title: 'Add Visit Record',
+                    subtitle: 'Record patient visits and medical history',
+                    icon: 'fas fa-file-medical-alt'
+                },
+                blood: {
+                    title: 'Blood Bank Management',
+                    subtitle: 'Monitor and manage blood inventory',
+                    icon: 'fas fa-tint'
+                },
+                critical: {
+                    title: 'Critical Stock Alerts',
+                    subtitle: 'View and respond to critical blood stock alerts',
+                    icon: 'fas fa-exclamation-triangle'
+                },
+                emergency: {
+                    title: 'Emergency Alerts',
+                    subtitle: 'Global emergency alerts and responses',
+                    icon: 'fas fa-bell'
+                }
+            };
+            
+            const data = pageData[section];
+            document.getElementById('pageTitle').textContent = data.title;
+            document.getElementById('pageSubtitle').textContent = data.subtitle;
+            document.querySelector('.page-title-icon i').className = data.icon;
+            
+            document.getElementById(section + 'Section').classList.add('active');
+            
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+            
+            if (section === 'blood') loadBloodBank();
+            if (section === 'critical') loadCriticalAlerts();
+            if (section === 'emergency') loadEmergencyAlerts();
+        }
+
+        // Authentication Check
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('userRole');
+            const dataStr = localStorage.getItem('hospitalData');
+            
+            if (!token || role !== 'hospital' || !dataStr) {
+                alert('Please login first!');
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            hospitalData = JSON.parse(dataStr);
+            document.getElementById('hospitalNameSidebar').textContent = hospitalData.hospitalName;
+            
+            return true;
+        }
+
+        // Patient Search
+        async function searchPatient() {
+            const patientId = document.getElementById('patientSearchId').value.trim();
+            if (!patientId) return alert('Enter Patient ID');
+            
+            const results = document.getElementById('patientResults');
+            results.innerHTML = `
+                <div class="empty-state">
+                    <div class="spinner"></div>
+                    <h4>Searching Patient Records</h4>
+                    <p>Please wait while we search for patient records...</p>
+                </div>`;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/patient/search/${patientId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    const p = result.patient;
+                    const visits = result.visits;
+                    results.innerHTML = `
+                        <div class="patient-result">
+                            <div class="d-flex align-center justify-between mb-4">
+                                <h4><i class="fas fa-user"></i> ${p.name}</h4>
+                                <span class="badge badge-danger"><i class="fas fa-tint"></i> ${p.bloodGroup}</span>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <i class="fas fa-id-card"></i>
+                                    <div><strong>Patient ID:</strong> ${p.userId}</div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <div><strong>Email:</strong> ${p.email}</div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-birthday-cake"></i>
+                                    <div><strong>Date of Birth:</strong> ${new Date(p.dateOfBirth).toLocaleDateString()}</div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-phone"></i>
+                                    <div><strong>Emergency Contact:</strong> ${p.emergencyContact}</div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <div><strong>Address:</strong> ${p.address}</div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-hospital"></i>
+                                    <div><strong>Registered By:</strong> ${p.registeredBy || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-center gap-4 mt-6 mb-4">
+                            <h3 style="font-size: 20px; color: var(--primary);"><i class="fas fa-history"></i> Visit History (${visits.length})</h3>
+                        </div>
+                        ${visits.length > 0 ? visits.map(v => `
+                            <div class="patient-result">
+                                <div class="d-flex align-center justify-between mb-4">
+                                    <div>
+                                        <h4 style="color: var(--primary);"><i class="fas fa-hospital"></i> ${v.hospitalName}</h4>
+                                        <p style="color: var(--text-light); font-size: 14px; margin-top: 4px;">
+                                            <i class="far fa-calendar"></i> ${new Date(v.visitDate).toLocaleDateString()} 
+                                            • <i class="fas fa-user-md"></i> ${v.doctorName}
+                                        </p>
+                                    </div>
+                                    <span class="badge badge-info">Medical Visit</span>
+                                </div>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <i class="fas fa-stethoscope"></i>
+                                        <div><strong>Diagnosis:</strong> ${v.diagnosis}</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-prescription-bottle-alt"></i>
+                                        <div><strong>Prescription:</strong> ${v.prescription}</div>
+                                    </div>
+                                    ${v.labResults ? `
+                                        <div class="info-item">
+                                            <i class="fas fa-flask"></i>
+                                            <div><strong>Lab Results:</strong> ${v.labResults}</div>
+                                        </div>
+                                    ` : ''}
+                                    ${v.notes ? `
+                                        <div class="info-item">
+                                            <i class="fas fa-notes-medical"></i>
+                                            <div><strong>Notes:</strong> ${v.notes}</div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `).join('') : '<div class="empty-state"><i class="fas fa-file-medical-alt"></i><h4>No Visit History</h4><p>No visit records found for this patient</p></div>'}
+                    `;
+                } else {
+                    results.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h4>Patient Not Found</h4><p style="color: var(--danger);">${result.message}</p></div>`;
+                }
+            } catch (error) {
+                results.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h4>Search Error</h4><p style="color: var(--danger);">Error searching patient records</p></div>';
+            }
+        }
+
+        // Register Patient
+        async function handleRegisterPatient(e) {
+            e.preventDefault();
+            
+            const data = {
+                name: document.getElementById('regName').value.trim(),
+                email: document.getElementById('regEmail').value.trim(),
+                dateOfBirth: document.getElementById('regDOB').value,
+                bloodGroup: document.getElementById('regBlood').value,
+                emergencyContact: document.getElementById('regContact').value.trim(),
+                address: document.getElementById('regAddress').value.trim(),
+                registeredBy: hospitalData.hospitalId
+            };
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/register/patient`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('regSuccess').style.display = 'flex';
+                    document.getElementById('newPatientId').textContent = result.userId;
+                    document.getElementById('generatedPatientId').style.display = 'block';
+                    e.target.reset();
+                    setTimeout(() => {
+                        document.getElementById('regSuccess').style.display = 'none';
+                    }, 5000);
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert('Error registering patient');
+            }
+        }
+
+        function copyPatientId() {
+            const patientId = document.getElementById('newPatientId').textContent;
+            navigator.clipboard.writeText(patientId).then(() => {
+                alert('Patient ID copied to clipboard!');
+            });
+        }
+
+        // Add Visit Record
+        async function handleAddVisit(e) {
+            e.preventDefault();
+            
+            const data = {
+                userId: document.getElementById('visitPatientId').value.trim(),
+                hospitalId: hospitalData.hospitalId,
+                hospitalName: hospitalData.hospitalName,
+                diagnosis: document.getElementById('visitDiagnosis').value.trim(),
+                prescription: document.getElementById('visitPrescription').value.trim(),
+                labResults: document.getElementById('visitLab').value.trim(),
+                doctorName: document.getElementById('visitDoctor').value.trim(),
+                notes: document.getElementById('visitNotes').value.trim()
+            };
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/addVisit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('visitSuccess').style.display = 'flex';
+                    e.target.reset();
+                    setTimeout(() => {
+                        document.getElementById('visitSuccess').style.display = 'none';
+                    }, 5000);
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert('Error adding visit');
+            }
+        }
+
+        // Blood Bank Management - IMPROVED UI
+        async function loadBloodBank() {
+            const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+            const grid = document.getElementById('bloodGrid');
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/blood/${hospitalData.hospitalId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                const data = result.success ? result.bloodData : [];
+                
+                grid.innerHTML = bloodTypes.map(type => {
+                    const record = data.find(b => b.bloodType === type);
+                    const units = record ? record.availableUnits : 0;
+                    const critical = units < 10;
+                    
+                    return `
+                        <div class="blood-card ${critical ? 'critical' : ''}">
+                            <div class="blood-header">
+                                <div class="blood-type">${type}</div>
+                                <div class="blood-units">
+                                    ${units} <span class="unit-label">units</span>
+                                </div>
+                                <div class="blood-status ${critical ? 'critical' : 'available'}">
+                                    <i class="fas fa-${critical ? 'exclamation-circle' : 'check-circle'}"></i>
+                                    ${critical ? 'Critical Stock' : 'Available'}
+                                </div>
+                            </div>
+                            
+                            <div class="blood-controls">
+                                <div class="blood-control-group">
+                                    <div class="blood-control-label">
+                                        <i class="fas fa-plus-circle" style="color: var(--success);"></i>
+                                        Add Units
+                                    </div>
+                                    <div class="blood-input-group">
+                                        <input type="number" class="blood-input" id="add-${type}" placeholder="0" min="1" max="100">
+                                        <button class="blood-btn add" onclick="addBlood('${type}')" title="Add units">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="blood-control-group">
+                                    <div class="blood-control-label">
+                                        <i class="fas fa-minus-circle" style="color: var(--danger);"></i>
+                                        Remove Units
+                                    </div>
+                                    <div class="blood-input-group">
+                                        <input type="number" class="blood-input" id="remove-${type}" placeholder="0" min="1" max="${units}">
+                                        <button class="blood-btn remove" onclick="removeBlood('${type}')" title="Remove units">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="blood-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">${units}</div>
+                                    <div class="stat-label">Current</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value" style="color: ${critical ? 'var(--danger)' : 'var(--success)'}">${critical ? '<i class="fas fa-exclamation-triangle"></i>' : '<i class="fas fa-check"></i>'}</div>
+                                    <div class="stat-label">Status</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">10</div>
+                                    <div class="stat-label">Threshold</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                grid.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h4>Loading Error</h4><p style="color: var(--danger);">Unable to load blood bank data</p></div>';
+            }
+        }
+
+        async function addBlood(type) {
+            const input = document.getElementById(`add-${type}`);
+            const units = parseInt(input.value);
+            if (!units || units <= 0) {
+                alert('Please enter valid units to add');
+                input.focus();
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('token');
+                await fetch(`${API_URL}/blood/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ 
+                        hospitalId: hospitalData.hospitalId, 
+                        hospitalName: hospitalData.hospitalName, 
+                        bloodType: type, 
+                        units 
+                    })
+                });
+                input.value = '';
+                loadBloodBank();
+            } catch (error) {
+                alert('Error adding blood units');
+            }
+        }
+
+        async function removeBlood(type) {
+            const input = document.getElementById(`remove-${type}`);
+            const units = parseInt(input.value);
+            
+            if (!units || units <= 0) {
+                alert('Please enter valid units to remove');
+                input.focus();
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/blood/remove`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ 
+                        hospitalId: hospitalData.hospitalId, 
+                        hospitalName: hospitalData.hospitalName, 
+                        bloodType: type, 
+                        units 
+                    })
+                });
+                const result = await response.json();
+                if (!result.success) {
+                    alert(result.message);
+                    return;
+                }
+                input.value = '';
+                loadBloodBank();
+            } catch (error) {
+                alert('Error removing blood units');
+            }
+        }
+
+        // Critical Alerts
+        async function loadCriticalAlerts() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/alerts/critical`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                
+                const container = document.getElementById('criticalAlerts');
+                if (result.success && result.alerts.length > 0) {
+                    container.innerHTML = result.alerts.map(a => `
+                        <div class="alert-item">
+                            <div class="d-flex align-center justify-between mb-4">
+                                <div>
+                                    <h4><i class="fas fa-hospital"></i> ${a.hospitalName}</h4>
+                                    <p style="color: var(--text-light); font-size: 14px; margin-top: 4px;">
+                                        Blood Type: <strong style="color: var(--primary);">${a.bloodType}</strong>
+                                    </p>
+                                </div>
+                                <span class="badge badge-danger"><i class="fas fa-exclamation-circle"></i> Critical</span>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <i class="fas fa-tint"></i>
+                                    <div><strong>Current Stock:</strong> ${a.currentUnits} units</div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <div><strong>Threshold:</strong> ${a.threshold} units</div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="far fa-calendar"></i>
+                                    <div><strong>Date:</strong> ${new Date(a.createdAt).toLocaleDateString()}</div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-comments"></i>
+                                    <div><strong>Responses:</strong> ${a.acknowledgedBy.length}</div>
+                                </div>
+                            </div>
+                            ${a.acknowledgedBy.length > 0 ? `
+                                <div class="mt-6" style="padding: 20px; background: var(--bg); border-radius: 12px;">
+                                    <strong style="font-size: 15px; color: var(--success);"><i class="fas fa-check-circle"></i> Hospital Responses:</strong>
+                                    ${a.acknowledgedBy.map(ack => `
+                                        <div class="mt-4" style="padding: 16px; background: var(--card-bg); border-radius: 8px; border-left: 4px solid var(--success);">
+                                            <p style="font-weight: 600; color: var(--primary); font-size: 15px;"><i class="fas fa-hospital"></i> ${ack.hospitalName}</p>
+                                            <p style="margin-top: 8px; color: var(--text); font-size: 15px;">${ack.response || 'Acknowledged'}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            ${a.hospitalId !== hospitalData.hospitalId ? `
+                                <button class="btn btn-success mt-6" onclick="acknowledgeCritical('${a.alertId}')">
+                                    <i class="fas fa-handshake"></i>
+                                    <span>Acknowledge & Offer Help</span>
+                                </button>
+                            ` : '<p class="mt-6" style="color: var(--warning); font-weight: 600; padding: 16px; background: rgba(245, 158, 11, 0.1); border-radius: 8px; border-left: 4px solid var(--warning);"><i class="fas fa-info-circle"></i> Your Hospital Alert</p>'}
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-check-circle"></i><h4>All Systems Normal</h4><p>No critical alerts at this time</p></div>';
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h4>Loading Error</h4><p style="color: var(--danger);">Error loading critical alerts</p></div>';
+            }
+        }
+
+        async function acknowledgeCritical(alertId) {
+            const response = prompt('Enter your response/offer (e.g., "We can provide 15 units"):');
+            if (!response) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                await fetch(`${API_URL}/alerts/critical/acknowledge`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ alertId, hospitalId: hospitalData.hospitalId, hospitalName: hospitalData.hospitalName, response })
+                });
+                alert('Alert acknowledged successfully!');
+                loadCriticalAlerts();
+            } catch (error) {
+                alert('Error acknowledging alert');
+            }
+        }
+
+        // Emergency Alerts
+        async function loadEmergencyAlerts() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/alerts/emergency`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                
+                const container = document.getElementById('emergencyAlerts');
+                if (result.success && result.alerts.length > 0) {
+                    container.innerHTML = result.alerts.map(a => `
+                        <div class="alert-item">
+                            <div class="d-flex align-center justify-between mb-4">
+                                <div>
+                                    <h4><i class="fas fa-hospital"></i> ${a.hospitalName}</h4>
+                                    <p style="color: var(--text-light); font-size: 14px; margin-top: 4px;">
+                                        <i class="far fa-clock"></i> ${new Date(a.createdAt).toLocaleString()}
+                                    </p>
+                                </div>
+                                <span class="badge badge-danger"><i class="fas fa-bell"></i> ${a.priority.toUpperCase()}</span>
+                            </div>
+                            <p style="font-size: 18px; color: var(--text); margin: 24px 0; font-weight: 600; padding-left: 16px; border-left: 4px solid var(--danger); line-height: 1.6;">
+                                ${a.message}
+                            </p>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <i class="fas fa-tag"></i>
+                                    <div><strong>Type:</strong> ${a.type}</div>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-comments"></i>
+                                    <div><strong>Responses:</strong> ${a.acknowledgedBy.length}</div>
+                                </div>
+                            </div>
+                            ${a.acknowledgedBy.length > 0 ? `
+                                <div class="mt-6" style="padding: 20px; background: var(--bg); border-radius: 12px;">
+                                    <strong style="font-size: 15px; color: var(--success);"><i class="fas fa-check-circle"></i> Hospital Responses (${a.acknowledgedBy.length}):</strong>
+                                    ${a.acknowledgedBy.map(ack => `
+                                        <div class="mt-4" style="padding: 16px; background: var(--card-bg); border-radius: 8px; border-left: 4px solid var(--success);">
+                                            <p style="font-weight: 600; color: var(--primary); font-size: 15px;"><i class="fas fa-hospital"></i> ${ack.hospitalName}</p>
+                                            <p style="margin-top: 8px; color: var(--text); font-size: 15px;">${ack.response}</p>
+                                            <p style="margin-top: 8px; font-size: 13px; color: var(--text-light);"><i class="far fa-clock"></i> ${new Date(ack.timestamp).toLocaleString()}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            ${a.hospitalId !== hospitalData.hospitalId ? `
+                                <button class="btn mt-6" onclick="acknowledgeEmergency('${a.alertId}')">
+                                    <i class="fas fa-reply"></i>
+                                    <span>Send Response</span>
+                                </button>
+                            ` : '<p class="mt-6" style="color: var(--warning); font-weight: 600; padding: 16px; background: rgba(245, 158, 11, 0.1); border-radius: 8px; border-left: 4px solid var(--warning);"><i class="fas fa-info-circle"></i> Your Emergency Alert</p>'}
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-bell-slash"></i><h4>No Active Emergencies</h4><p>No emergency alerts at this time</p></div>';
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h4>Loading Error</h4><p style="color: var(--danger);">Error loading emergency alerts</p></div>';
+            }
+        }
+
+        async function acknowledgeEmergency(alertId) {
+            const response = prompt('Enter your response (e.g., "Sending ambulance with supplies"):');
+            if (!response) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                await fetch(`${API_URL}/alerts/emergency/acknowledge`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ alertId, hospitalId: hospitalData.hospitalId, hospitalName: hospitalData.hospitalName, response })
+                });
+                alert('Response sent successfully!');
+                loadEmergencyAlerts();
+            } catch (error) {
+                alert('Error sending response');
+            }
+        }
+
+        // Emergency Modal
+        function showEmergencyModal() {
+            document.getElementById('emergencyModal').classList.add('active');
+            document.getElementById('emergencyMessage').focus();
+        }
+
+        function closeEmergencyModal() {
+            document.getElementById('emergencyModal').classList.remove('active');
+            document.getElementById('emergencyMessage').value = '';
+        }
+
+        async function sendEmergencyAlert() {
+            const message = document.getElementById('emergencyMessage').value.trim();
+            if (!message) return alert('Please enter an emergency message');
+            
+            try {
+                const token = localStorage.getItem('token');
+                await fetch(`${API_URL}/alerts/emergency`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ 
+                        hospitalId: hospitalData.hospitalId, 
+                        hospitalName: hospitalData.hospitalName, 
+                        message, 
+                        type: 'emergency', 
+                        priority: 'high' 
+                    })
+                });
+                alert('Emergency alert sent to all hospitals!');
+                closeEmergencyModal();
+                if (document.getElementById('emergencySection').classList.contains('active')) {
+                    loadEmergencyAlerts();
+                }
+            } catch (error) {
+                alert('Error sending alert');
+            }
+        }
+
+        // Socket Events
+        socket.on('criticalStock', (data) => {
+            if (data.hospitalId !== hospitalData.hospitalId) {
+                const alertSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+                alertSound.play().catch(e => console.log('Audio play failed:', e));
+                
+                if (confirm(`Critical Stock Alert!\n\n${data.hospitalName} urgently needs ${data.bloodType}\nCurrent stock: ${data.currentUnits} units\n\nGo to Critical Alerts?`)) {
+                    navigate('critical');
+                }
+            }
+        });
+
+        socket.on('emergencyAlert', (data) => {
+            if (data.hospitalName !== hospitalData.hospitalName) {
+                const alertSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-emergency-hospital-alarm-1000.mp3');
+                alertSound.play().catch(e => console.log('Audio play failed:', e));
+                
+                if (confirm(`EMERGENCY ALERT\n\nFrom: ${data.hospitalName}\n\n${data.message}\n\nPriority: ${data.priority.toUpperCase()}\n\nGo to Emergency Alerts?`)) {
+                    navigate('emergency');
+                }
+            }
+        });
+
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Window Resize Handler
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+
+        // Initialize Dashboard
+        checkAuth();
+    </script>
+</body>
+</html>
