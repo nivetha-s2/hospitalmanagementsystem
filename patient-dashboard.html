@@ -1,0 +1,2141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Patient Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #0ea5e9;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --sidebar-bg: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+            --sidebar-hover: rgba(79, 70, 229, 0.2);
+            --sidebar-active: rgba(79, 70, 229, 0.3);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f1f5f9;
+            --text-light: #94a3b8;
+            --border: #334155;
+            --sidebar-bg: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: var(--transition);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Header - Enhanced */
+        .header {
+            background: var(--card-bg);
+            padding: 1.25rem 2.5rem;
+            box-shadow: var(--shadow-lg);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            background: rgba(var(--card-bg-rgb), 0.95);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-gradient);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            transition: var(--transition);
+        }
+
+        .logo:hover .logo-icon {
+            transform: rotate(10deg) scale(1.05);
+        }
+
+        .logo-text {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: var(--border);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        }
+
+        .user-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .user-info p {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .user-info p i {
+            color: var(--success);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            font-size: 1.25rem;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            padding: 0.875rem 1.75rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Main Layout */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 90px);
+            margin-top: 90px;
+        }
+
+        /* Sidebar - Enhanced */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            padding: 2.5rem 0;
+            position: fixed;
+            top: 90px;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            z-index: 900;
+            transition: transform 0.3s ease;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-nav {
+            padding: 0 1.75rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 1.25rem 1.5rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.75rem;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--sidebar-hover);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-item:hover::before {
+            transform: translateX(0);
+        }
+
+        .nav-item.active {
+            background: var(--sidebar-active);
+            color: white;
+            font-weight: 600;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active::before {
+            transform: translateX(0);
+        }
+
+        .nav-item i {
+            font-size: 1.35rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem;
+            margin-left: 280px;
+            transition: margin-left 0.3s ease;
+            background: var(--bg);
+        }
+
+        /* Welcome Banner - Enhanced with better name visibility */
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.95), rgba(124, 58, 237, 0.95)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><path fill="%23ffffff" fill-opacity="0.1" d="M0,50 Q250,100 500,50 T1000,50 L1000,100 L0,100 Z"/></svg>');
+            background-size: cover;
+            color: white;
+            padding: 3rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        .welcome-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -30%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: float 25s infinite linear reverse;
+        }
+
+        @keyframes float {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .welcome-banner h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Patient name styling - improved visibility */
+        .patient-name {
+            color: white;
+            font-weight: 800;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.25rem 1rem;
+            border-radius: var(--radius-md);
+            display: inline-block;
+            margin: 0 0.5rem;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .welcome-banner p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+        }
+
+        /* Quick Stats - Centered single card */
+        .quick-stats {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .stat-content {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .stat-text h3 {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-text p {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Medical History - Enhanced */
+        .medical-history {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .medical-history:hover {
+            box-shadow: var(--shadow-xl);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-header i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .ai-summary-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .ai-summary-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Visit Cards - Enhanced */
+        .visit-card {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid var(--primary);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .visit-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .visit-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .visit-hospital {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .visit-hospital i {
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .visit-date {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--card-bg);
+            border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+
+        .visit-date i {
+            color: var(--primary);
+        }
+
+        .visit-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .detail-item i {
+            color: var(--primary);
+            margin-top: 0.25rem;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+
+        .detail-item strong {
+            font-weight: 600;
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+
+        .visit-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            padding: 0.875rem 1.75rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+        }
+
+        .share-btn {
+            padding: 0.875rem 1.75rem;
+            background: var(--info);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .share-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+        }
+
+        /* AI Assistant - Enhanced */
+        .ai-assistant {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            height: fit-content;
+            transition: var(--transition);
+        }
+
+        .ai-assistant:hover {
+            box-shadow: var(--shadow-xl);
+        }
+
+        .chat-container {
+            height: 550px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.75rem;
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            margin-bottom: 0.5rem;
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            max-width: 85%;
+            animation: fadeIn 0.4s ease;
+            line-height: 1.6;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.bot {
+            background: var(--primary-gradient);
+            color: white;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.bot::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 0;
+            border-width: 8px 8px 8px 0;
+            border-style: solid;
+            border-color: transparent var(--primary) transparent transparent;
+        }
+
+        .message.user {
+            background: var(--card-bg);
+            color: var(--text);
+            margin-left: auto;
+            border: 1px solid var(--border);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.user::before {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 0;
+            border-width: 8px 0 8px 8px;
+            border-style: solid;
+            border-color: transparent transparent transparent var(--border);
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1.25rem 1.75rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 1rem;
+            transition: var(--transition);
+            padding-right: 60px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .send-btn {
+            padding: 1.25rem 2.5rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .send-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .quick-action-btn {
+            padding: 0.875rem;
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .quick-action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* AI Summary - Enhanced */
+        .ai-summary {
+            background: linear-gradient(135deg, rgba(254, 243, 199, 0.95), rgba(253, 230, 138, 0.95));
+            border: 2px solid var(--warning);
+            padding: 2.5rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 2rem;
+            animation: slideIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .ai-summary {
+            background: linear-gradient(135deg, rgba(51, 39, 1, 0.95), rgba(74, 53, 0, 0.95));
+            border-color: var(--warning);
+        }
+
+        .ai-summary h4 {
+            color: #92400e;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        [data-theme="dark"] .ai-summary h4 {
+            color: #fbbf24;
+        }
+
+        .summary-text {
+            color: #92400e;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        [data-theme="dark"] .summary-text {
+            color: #fde68a;
+        }
+
+        .summary-text p {
+            margin-bottom: 1rem;
+        }
+
+        /* Health Tips */
+        .health-tips {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            margin-top: 2.5rem;
+        }
+
+        .tip-card {
+            background: var(--bg);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--success);
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .tip-icon {
+            color: var(--success);
+            font-size: 1.25rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: var(--transition);
+            position: relative;
+            z-index: 1001;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: var(--shadow-xl);
+                width: 280px;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+            
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .header {
+                padding: 1rem 1.5rem;
+            }
+            
+            .logo-text {
+                font-size: 1.5rem;
+            }
+            
+            .user-info {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-banner {
+                padding: 2rem;
+            }
+            
+            .welcome-banner h1 {
+                font-size: 2rem;
+            }
+            
+            .medical-history,
+            .ai-assistant {
+                padding: 2rem;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+            
+            .ai-summary-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .visit-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .visit-actions {
+                flex-direction: column;
+            }
+            
+            .chat-input-area {
+                flex-direction: column;
+            }
+            
+            .send-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 1.25rem;
+            }
+            
+            .welcome-banner {
+                padding: 1.75rem;
+            }
+            
+            .stat-card {
+                padding: 1.5rem;
+            }
+            
+            .visit-card {
+                padding: 1.5rem;
+            }
+            
+            .header-right {
+                gap: 0.75rem;
+            }
+            
+            .logout-btn span {
+                display: none;
+            }
+            
+            .logout-btn {
+                padding: 0.875rem;
+                min-width: 48px;
+            }
+            
+            .theme-toggle {
+                width: 44px;
+                height: 44px;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(79, 70, 229, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Utility Classes */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .slide-up {
+            animation: slideIn 0.5s ease;
+        }
+
+        /* Share modal */
+        .share-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .share-modal-content {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            max-width: 500px;
+            width: 90%;
+            box-shadow: var(--shadow-xl);
+            animation: slideIn 0.3s ease;
+        }
+
+        .share-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .share-option {
+            padding: 1.5rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .share-option:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .share-option i {
+            font-size: 2rem;
+        }
+
+        .share-option span {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div class="logo-text">MediCare</div>
+            </div>
+        </div>
+        
+        <div class="user-profile" onclick="showProfileMenu()">
+            <div class="user-avatar" id="userAvatar">JD</div>
+            <div class="user-info">
+                <h4 id="userName">John Doe</h4>
+                <p><i class="fas fa-circle"></i> Online</p>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-nav">
+                <div class="nav-item active" onclick="navigate('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" onclick="navigate('medical')">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Medical History</span>
+                </div>
+                <div class="nav-item" onclick="navigate('assistant')">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </div>
+                <div class="nav-item" onclick="navigate('appointments')">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </div>
+                <div class="nav-item" onclick="navigate('prescriptions')">
+                    <i class="fas fa-prescription-bottle-alt"></i>
+                    <span>Prescriptions</span>
+                </div>
+                <div class="nav-item" onclick="navigate('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Welcome Banner -->
+            <section class="welcome-banner">
+                <h1>Welcome back, <span id="patientName" class="patient-name">John</span>!</h1>
+                <p>Here's your complete health dashboard with medical history and AI assistance. Stay updated with your health metrics and get personalized recommendations.</p>
+            </section>
+
+            <!-- Quick Stats - Only Total Visits -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-icon">
+                            <i class="fas fa-hospital"></i>
+                        </div>
+                        <div class="stat-text">
+                            <h3>Total Visits</h3>
+                            <p id="totalVisits">12</p>
+                            <div class="stat-trend trend-up">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Last: 2 weeks ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Medical History -->
+                <section class="medical-history">
+                    <div class="section-header">
+                        <h2><i class="fas fa-file-medical"></i> Medical History</h2>
+                        <button class="ai-summary-btn" onclick="generateSummary()">
+                            <i class="fas fa-robot"></i>
+                            <span>Generate AI Summary</span>
+                        </button>
+                    </div>
+
+                    <!-- AI Summary -->
+                    <div id="aiSummaryBox" class="hidden">
+                        <div class="ai-summary">
+                            <h4><i class="fas fa-robot"></i> AI-Generated Medical Summary</h4>
+                            <div class="summary-text" id="summaryText"></div>
+                        </div>
+                    </div>
+
+                    <!-- Visit Cards -->
+                    <div id="medicalHistory">
+                        <!-- Loading state -->
+                        <div class="empty-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <h3>Loading Medical History</h3>
+                            <p>Please wait while we fetch your records</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Assistant -->
+                <section class="ai-assistant">
+                    <div class="section-header">
+                        <h2><i class="fas fa-robot"></i> AI Health Assistant</h2>
+                    </div>
+                    
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message bot">
+                                <i class="fas fa-robot"></i> Hello! I'm your AI Health Assistant. I can help you with diet suggestions, health tips, medication reminders, and answer basic health questions. How can I assist you today?
+                                <div class="response-info" style="font-size: 0.8rem; opacity: 0.9; margin-top: 0.75rem;">
+                                    💡 Try asking about symptoms, diet plans, or exercise routines
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input-area">
+                            <input type="text" class="chat-input" id="chatInput" 
+                                   placeholder="Ask about health, diet, exercise, etc..."
+                                   onkeypress="if(event.key === 'Enter') sendMessage()">
+                            <button class="send-btn" onclick="sendMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                                <span>Send</span>
+                            </button>
+                        </div>
+                        
+                        <div class="quick-actions">
+                            <button class="quick-action-btn" onclick="askQuickQuestion('What foods are good for heart health?')">
+                                <i class="fas fa-heart"></i> Heart Health
+                            </button>
+                            <button class="quick-action-btn" onclick="askQuickQuestion('Suggest a daily exercise routine')">
+                                <i class="fas fa-running"></i> Exercise
+                            </button>
+                            <button class="quick-action-btn" onclick="askQuickQuestion('How to manage stress?')">
+                                <i class="fas fa-brain"></i> Mental Health
+                            </button>
+                            <button class="quick-action-btn" onclick="askQuickQuestion('What are common flu symptoms?')">
+                                <i class="fas fa-thermometer"></i> Symptoms
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Health Tips Section -->
+            <section class="health-tips">
+                <div class="section-header">
+                    <h2><i class="fas fa-lightbulb"></i> Today's Health Tips</h2>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <h4>Stay Hydrated</h4>
+                        <p>Drink at least 8 glasses of water daily to maintain optimal body functions and improve skin health.</p>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <h4>Regular Exercise</h4>
+                        <p>Aim for 30 minutes of moderate exercise daily to boost cardiovascular health and mental well-being.</p>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <h4>Balanced Diet</h4>
+                        <p>Include fruits, vegetables, lean proteins, and whole grains in your meals for balanced nutrition.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="share-modal hidden">
+        <div class="share-modal-content">
+            <h2 style="margin-bottom: 1rem;">Share Medical Report</h2>
+            <p style="color: var(--text-light); margin-bottom: 2rem;">Choose how you want to share this medical report:</p>
+            
+            <div class="share-options" id="shareOptions">
+                <!-- Options will be dynamically added -->
+            </div>
+            
+            <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+                <button onclick="closeShareModal()" style="padding: 0.75rem 1.5rem; border: 1px solid var(--border); background: transparent; color: var(--text); border-radius: var(--radius-md); cursor: pointer;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+    <script>
+        // Enhanced initialization with performance tracking
+        const API_URL = 'https://hospital2-4.onrender.com/api';
+        const socket = io('https://hospital2-4.onrender.com');
+        let userData = null;
+        let visitsData = [];
+        let currentShareVisitId = null;
+
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const themeToggle = document.querySelector('.theme-toggle i');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const patientName = document.getElementById('patientName');
+        const totalVisits = document.getElementById('totalVisits');
+        const shareModal = document.getElementById('shareModal');
+        const shareOptions = document.getElementById('shareOptions');
+
+        // Enhanced Theme Management
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            themeToggle.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            
+            // Add transition effect
+            document.body.style.transition = 'all 0.5s ease';
+            setTimeout(() => {
+                document.body.style.transition = '';
+            }, 500);
+        }
+
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeToggle.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+        // Enhanced Sidebar Toggle
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        }
+
+        // Enhanced Navigation
+        function navigate(section) {
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            event.currentTarget.classList.add('active');
+            
+            // Add animation
+            event.currentTarget.style.animation = 'none';
+            setTimeout(() => {
+                event.currentTarget.style.animation = 'fadeIn 0.3s ease';
+            }, 10);
+            
+            // Close sidebar on mobile
+            if (window.innerWidth <= 992) {
+                toggleSidebar();
+            }
+        }
+
+        // Enhanced Authentication Check
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const userRole = localStorage.getItem('userRole');
+            const userDataString = localStorage.getItem('userData');
+
+            if (!token || userRole !== 'patient' || !userDataString) {
+                showToast('Please login first!', 'error');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+                return false;
+            }
+
+            try {
+                userData = JSON.parse(userDataString);
+                loadPatientData();
+                loadMedicalHistory();
+                simulateLoading();
+                return true;
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                window.location.href = 'index.html';
+                return false;
+            }
+        }
+
+        // Enhanced Load Patient Data
+        function loadPatientData() {
+            if (!userData) return;
+            
+            // Set user initials for avatar
+            const initials = userData.name
+                .split(' ')
+                .map(n => n[0])
+                .join('')
+                .toUpperCase()
+                .slice(0, 2);
+            
+            userAvatar.textContent = initials;
+            userName.textContent = userData.name;
+            patientName.textContent = userData.name.split(' ')[0];
+        }
+
+        // Enhanced Load Medical History
+        async function loadMedicalHistory() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/visits/${userData.userId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const result = await response.json();
+                const historyDiv = document.getElementById('medicalHistory');
+
+                if (result.success && result.visits && result.visits.length > 0) {
+                    visitsData = result.visits;
+                    totalVisits.textContent = visitsData.length;
+                    
+                    historyDiv.innerHTML = result.visits.map(visit => `
+                        <div class="visit-card fade-in">
+                            <div class="visit-header">
+                                <div class="visit-hospital">
+                                    <i class="fas fa-hospital"></i>
+                                    ${visit.hospitalName}
+                                </div>
+                                <div class="visit-date">
+                                    <i class="far fa-calendar"></i>
+                                    ${new Date(visit.visitDate).toLocaleDateString('en-US', { 
+                                        weekday: 'long', 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric' 
+                                    })}
+                                </div>
+                            </div>
+                            
+                            <div class="visit-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-user-md"></i>
+                                    <div><strong>Doctor:</strong> ${visit.doctorName}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-stethoscope"></i>
+                                    <div><strong>Diagnosis:</strong> ${visit.diagnosis}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-prescription-bottle-alt"></i>
+                                    <div><strong>Prescription:</strong> ${visit.prescription}</div>
+                                </div>
+                                ${visit.labResults ? `
+                                    <div class="detail-item">
+                                        <i class="fas fa-flask"></i>
+                                        <div><strong>Lab Results:</strong> ${visit.labResults}</div>
+                                    </div>
+                                ` : ''}
+                                ${visit.notes ? `
+                                    <div class="detail-item">
+                                        <i class="fas fa-notes-medical"></i>
+                                        <div><strong>Notes:</strong> ${visit.notes}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="visit-actions">
+                                <button class="download-btn" onclick="downloadReport('${visit.visitId}')">
+                                    <i class="fas fa-download"></i>
+                                    <span>Download Report</span>
+                                </button>
+                                <button class="share-btn" onclick="openShareModal('${visit.visitId}')">
+                                    <i class="fas fa-share-alt"></i>
+                                    <span>Share Report</span>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    historyDiv.innerHTML = `
+                        <div class="empty-state fade-in">
+                            <i class="fas fa-file-medical-alt"></i>
+                            <h3>No Medical History</h3>
+                            <p>Visit a hospital to add medical records</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading medical history:', error);
+                historyDiv.innerHTML = `
+                    <div class="empty-state fade-in">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error Loading History</h3>
+                        <p>Please try refreshing the page</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Enhanced Generate AI Summary
+        function generateSummary() {
+            if (visitsData.length === 0) {
+                showToast('No medical history available to summarize.', 'warning');
+                return;
+            }
+
+            const totalVisitsCount = visitsData.length;
+            const hospitals = [...new Set(visitsData.map(v => v.hospitalName))];
+            const recentDiagnoses = visitsData.slice(0, 3).map(v => v.diagnosis);
+            const medications = visitsData.slice(0, 3).map(v => v.prescription);
+
+            const summary = `
+                <p><strong>📊 Total Hospital Visits:</strong> ${totalVisitsCount}</p>
+                <p><strong>🏥 Hospitals Visited:</strong> ${hospitals.join(', ')}</p>
+                <p><strong>🩺 Recent Diagnoses:</strong> ${recentDiagnoses.join(', ')}</p>
+                <p><strong>💊 Current Medications:</strong> ${medications.join(', ')}</p>
+                <p><strong>📈 Health Status:</strong> Based on your visit history, you have been actively managing your health. Continue regular check-ups and follow prescribed medications.</p>
+                <p><strong>💡 Recommendations:</strong> 
+                <ul style="margin-left: 1.5rem;">
+                    <li>Maintain a balanced diet rich in fruits and vegetables</li>
+                    <li>Exercise for at least 30 minutes daily</li>
+                    <li>Ensure 7-8 hours of quality sleep each night</li>
+                    <li>Stay hydrated with 8 glasses of water daily</li>
+                    <li>Consult your doctor for any persistent symptoms</li>
+                </ul>
+                </p>
+            `;
+
+            document.getElementById('summaryText').innerHTML = summary;
+            const summaryBox = document.getElementById('aiSummaryBox');
+            summaryBox.classList.remove('hidden');
+            summaryBox.classList.add('slide-up');
+            
+            // Smooth scroll to summary
+            summaryBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            showToast('AI Summary generated successfully!', 'success');
+        }
+
+        // Generate Report Content - EXACT SAME as download file
+        function generateReportContent(visit) {
+            return `╔══════════════════════════════════════════╗
+            MEDICAL REPORT
+╚══════════════════════════════════════════╝
+
+👤 PATIENT INFORMATION
+───────────────────────────────────────────
+Name:          ${userData.name}
+Patient ID:    ${userData.userId}
+Blood Group:   ${userData.bloodGroup || 'Not specified'}
+Email:         ${userData.email}
+Contact:       ${userData.emergencyContact || 'Not specified'}
+
+📋 VISIT DETAILS
+───────────────────────────────────────────
+Hospital:      ${visit.hospitalName}
+Date:          ${new Date(visit.visitDate).toLocaleString()}
+Doctor:        Dr. ${visit.doctorName}
+Visit ID:      ${visit.visitId}
+
+🩺 DIAGNOSIS
+───────────────────────────────────────────
+${visit.diagnosis}
+
+💊 PRESCRIPTION
+───────────────────────────────────────────
+${visit.prescription}
+
+${visit.labResults ? `🧪 LAB RESULTS
+───────────────────────────────────────────
+${visit.labResults}
+
+` : ''}${visit.notes ? `📝 ADDITIONAL NOTES
+───────────────────────────────────────────
+${visit.notes}
+
+` : ''}╔══════════════════════════════════════════╗
+Generated: ${new Date().toLocaleString()}
+MediCare Health Management System
+╚══════════════════════════════════════════╝`;
+        }
+
+        // Enhanced Download Report
+        function downloadReport(visitId) {
+            const visit = visitsData.find(v => v.visitId === visitId);
+            if (!visit) return;
+
+            showToast('Preparing your report for download...', 'info');
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                const reportContent = generateReportContent(visit);
+                
+                const blob = new Blob([reportContent], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Medical_Report_${visitId}_${new Date().toISOString().split('T')[0]}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                showToast('Report downloaded successfully!', 'success');
+            }, 1000);
+        }
+
+        // Open Share Modal
+        function openShareModal(visitId) {
+            const visit = visitsData.find(v => v.visitId === visitId);
+            if (!visit) return;
+            
+            currentShareVisitId = visitId;
+            
+            // Clear previous options
+            shareOptions.innerHTML = '';
+            
+            // Check what sharing methods are available
+            const shareMethods = [];
+            
+            // Always show copy to clipboard
+            shareMethods.push({
+                id: 'clipboard',
+                name: 'Copy to Clipboard',
+                icon: 'fas fa-copy',
+                available: true
+            });
+            
+            // Check if Web Share API is available
+            if (navigator.share) {
+                shareMethods.push({
+                    id: 'native',
+                    name: 'Share via...',
+                    icon: 'fas fa-share-alt',
+                    available: true
+                });
+            }
+            
+            // Email option
+            shareMethods.push({
+                id: 'email',
+                name: 'Email',
+                icon: 'fas fa-envelope',
+                available: true
+            });
+            
+            // WhatsApp options based on device
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Mobile: Show WhatsApp app
+                shareMethods.push({
+                    id: 'whatsapp',
+                    name: 'WhatsApp',
+                    icon: 'fab fa-whatsapp',
+                    available: true
+                });
+            }
+            
+            // WhatsApp Web for both mobile and desktop
+            shareMethods.push({
+                id: 'whatsapp-web',
+                name: 'WhatsApp Web',
+                icon: 'fab fa-whatsapp',
+                available: true
+            });
+            
+            // LinkedIn
+            shareMethods.push({
+                id: 'linkedin',
+                name: 'LinkedIn',
+                icon: 'fab fa-linkedin',
+                available: true
+            });
+            
+            // Create share options
+            shareMethods.forEach(method => {
+                const option = document.createElement('div');
+                option.className = 'share-option';
+                option.onclick = () => shareReport(method.id, visitId);
+                option.innerHTML = `
+                    <i class="${method.icon}"></i>
+                    <span>${method.name}</span>
+                `;
+                shareOptions.appendChild(option);
+            });
+            
+            // Show modal
+            shareModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Share Modal
+        function closeShareModal() {
+            shareModal.classList.add('hidden');
+            document.body.style.overflow = '';
+            currentShareVisitId = null;
+        }
+
+        // Share Report with different methods - ALL SHARING EXACT TEXT FILE CONTENT
+        async function shareReport(method, visitId) {
+            const visit = visitsData.find(v => v.visitId === visitId);
+            if (!visit) return;
+            
+            const reportContent = generateReportContent(visit);
+            
+            switch(method) {
+                case 'clipboard':
+                    try {
+                        await navigator.clipboard.writeText(reportContent);
+                        showToast('Report copied to clipboard! You can paste it anywhere.', 'success');
+                        closeShareModal();
+                    } catch (err) {
+                        showToast('Failed to copy to clipboard', 'error');
+                    }
+                    break;
+                    
+                case 'native':
+                    try {
+                        // Create a file for sharing
+                        const fileName = `Medical_Report_${visitId}_${new Date().toISOString().split('T')[0]}.txt`;
+                        const blob = new Blob([reportContent], { type: 'text/plain' });
+                        const file = new File([blob], fileName, { type: 'text/plain' });
+                        
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                files: [file],
+                                title: `Medical Report - ${visit.hospitalName}`,
+                                text: `Medical report from ${visit.hospitalName} dated ${new Date(visit.visitDate).toLocaleDateString()}`
+                            });
+                        } else {
+                            // Fallback: share text content
+                            await navigator.share({
+                                title: `Medical Report - ${visit.hospitalName}`,
+                                text: reportContent
+                            });
+                        }
+                        showToast('Report shared successfully!', 'success');
+                        closeShareModal();
+                    } catch (error) {
+                        if (error.name !== 'AbortError') {
+                            showToast('Failed to share report', 'error');
+                        }
+                    }
+                    break;
+                    
+                case 'email':
+                    const emailSubject = `Medical Report from ${visit.hospitalName}`;
+                    const emailBody = reportContent;
+                    const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+                    window.location.href = mailtoLink;
+                    closeShareModal();
+                    break;
+                    
+                case 'whatsapp':
+                    // For WhatsApp mobile app - share exact text file content
+                    const whatsappText = reportContent;
+                    const whatsappLink = `whatsapp://send?text=${encodeURIComponent(whatsappText)}`;
+                    window.location.href = whatsappLink;
+                    closeShareModal();
+                    break;
+                    
+                case 'whatsapp-web':
+                    // For WhatsApp Web - share exact text file content
+                    const whatsappWebText = reportContent;
+                    const whatsappWebLink = `https://web.whatsapp.com/send?text=${encodeURIComponent(whatsappWebText)}`;
+                    window.open(whatsappWebLink, '_blank');
+                    closeShareModal();
+                    break;
+                    
+                case 'linkedin':
+                    // LinkedIn sharing - create a post with the report content
+                    const linkedinText = reportContent;
+                    // LinkedIn has a character limit for posts, so we need to check
+                    if (linkedinText.length > 3000) {
+                        // If too long, truncate and add note
+                        const truncatedText = linkedinText.substring(0, 2900) + "...\n\n[Report truncated due to length. Full report available via download.]";
+                        const linkedinLink = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&summary=${encodeURIComponent(truncatedText)}`;
+                        window.open(linkedinLink, '_blank', 'width=600,height=400');
+                    } else {
+                        const linkedinLink = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&summary=${encodeURIComponent(linkedinText)}`;
+                        window.open(linkedinLink, '_blank', 'width=600,height=400');
+                    }
+                    closeShareModal();
+                    break;
+            }
+        }
+
+        // Enhanced AI Chatbot
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user fade-in';
+            userMsg.innerHTML = `<i class="fas fa-user"></i> ${message}`;
+            chatMessages.appendChild(userMsg);
+            
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <span>AI Assistant is thinking...</span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/chatbot`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                const result = await response.json();
+                
+                // Remove typing indicator
+                document.getElementById('typingIndicator')?.remove();
+                
+                if (result.success && result.response) {
+                    // Format response with emojis
+                    let formattedResponse = result.response
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\n/g, '<br>')
+                        .replace(/heart/g, '❤️')
+                        .replace(/exercise/g, '🏃')
+                        .replace(/food/g, '🍎')
+                        .replace(/water/g, '💧')
+                        .replace(/sleep/g, '😴')
+                        .replace(/stress/g, '🧘');
+                    
+                    const botMsg = document.createElement('div');
+                    botMsg.className = 'message bot fade-in';
+                    botMsg.innerHTML = `
+                        <i class="fas fa-robot"></i> ${formattedResponse}
+                    `;
+                    chatMessages.appendChild(botMsg);
+                } else {
+                    throw new Error(result.message || 'No response');
+                }
+            } catch (error) {
+                console.error('Chat error:', error);
+                document.getElementById('typingIndicator')?.remove();
+                
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'message bot fade-in';
+                errorMsg.innerHTML = `
+                    <i class="fas fa-stethoscope"></i> I can help with health topics like:<br><br>
+                    🍎 <strong>Diet & Nutrition</strong> - Meal planning, healthy recipes<br>
+                    🏃 <strong>Exercise & Fitness</strong> - Workout routines, tips<br>
+                    💊 <strong>Chronic Conditions</strong> - Management advice<br>
+                    🧠 <strong>Mental Health</strong> - Stress management, mindfulness<br>
+                    😴 <strong>Sleep & Wellness</strong> - Sleep hygiene, relaxation<br><br>
+                    Ask me anything related to your health!
+                `;
+                chatMessages.appendChild(errorMsg);
+            }
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Quick question function
+        function askQuickQuestion(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+
+        // Profile Menu
+        function showProfileMenu() {
+            showToast('Profile menu would open here', 'info');
+        }
+
+        // Enhanced Logout
+        function logout() {
+            const modal = `
+                <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:2000;">
+                    <div style="background:var(--card-bg);padding:2rem;border-radius:var(--radius-lg);max-width:400px;width:90%;box-shadow:var(--shadow-xl);">
+                        <h3 style="margin-bottom:1rem;">Confirm Logout</h3>
+                        <p style="margin-bottom:2rem;color:var(--text-light);">Are you sure you want to logout from your account?</p>
+                        <div style="display:flex;gap:1rem;justify-content:flex-end;">
+                            <button onclick="closeModal()" style="padding:0.75rem 1.5rem;border:1px solid var(--border);background:transparent;color:var(--text);border-radius:var(--radius-md);cursor:pointer;">Cancel</button>
+                            <button onclick="confirmLogout()" style="padding:0.75rem 1.5rem;background:var(--danger);color:white;border:none;border-radius:var(--radius-md);cursor:pointer;">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const modalDiv = document.createElement('div');
+            modalDiv.innerHTML = modal;
+            modalDiv.id = 'logoutModal';
+            document.body.appendChild(modalDiv);
+        }
+
+        function closeModal() {
+            document.getElementById('logoutModal')?.remove();
+        }
+
+        function confirmLogout() {
+            localStorage.clear();
+            showToast('Logged out successfully', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        // Toast Notification System
+        function showToast(message, type = 'info') {
+            const colors = {
+                success: '#10b981',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#0ea5e9'
+            };
+            
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${colors[type]};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-lg);
+                z-index: 2000;
+                animation: slideIn 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                max-width: 350px;
+            `;
+            
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            toast.innerHTML = `
+                <i class="fas ${icons[type]}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Simulate loading animation
+        function simulateLoading() {
+            setTimeout(() => {
+                document.querySelectorAll('.fade-in').forEach(el => {
+                    el.style.animation = 'fadeIn 0.5s ease';
+                });
+            }, 500);
+        }
+
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                sidebar.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 992 && 
+                !sidebar.contains(e.target) && 
+                !e.target.closest('.mobile-menu-btn')) {
+                sidebar.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            // Close share modal when clicking outside
+            if (e.target.classList.contains('share-modal')) {
+                closeShareModal();
+            }
+        });
+
+        // Escape key to close modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeShareModal();
+                closeModal();
+            }
+        });
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            
+            // Add animation to welcome banner
+            setTimeout(() => {
+                document.querySelector('.welcome-banner').classList.add('fade-in');
+            }, 300);
+        });
+    </script>
+</body>
+</html>
